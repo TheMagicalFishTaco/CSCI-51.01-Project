@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+*.sln
+*.vcxproj
+*.user
+*.filters
+CSCI 51.01 Project/.vs/CSCI 51.01 Project/v16/Browse.VC.db
+CSCI 51.01 Project/.vs/CSCI 51.01 Project/v16/Browse.VC.db-shm
+CSCI 51.01 Project/.vs/CSCI 51.01 Project/v16/Browse.VC.db-wal
+CSCI 51.01 Project/.vs/CSCI 51.01 Project/v16/Browse.VC.opendb
+CSCI 51.01 Project/.vs/CSCI 51.01 Project/v16/ipch/AutoPCH/1531275c3f328d4/CSCI 51.01 PROJECT.ipch
