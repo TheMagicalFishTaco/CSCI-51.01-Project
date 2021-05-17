@@ -3,6 +3,6 @@ process 1: 0 50 2
 process 2: 40 2 3
 process 3: 20 3 1
 process 4: 30 55 1
-schedule algorithm: FCFS
+schedule algorithm: RR
 process 1: 100 10 1
 process 2: 10 70 1

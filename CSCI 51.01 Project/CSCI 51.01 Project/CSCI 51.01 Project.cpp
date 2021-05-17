@@ -48,19 +48,35 @@ int main()
         }
         else if (scheduleAlgorithm == "SJF")
         {
-
+            outputFile << "schedule algorithm: " << scheduleAlgorithm << "\n";
+            for (int q = 0; q < arrivalTime.size(); q++)
+            {
+                outputFile << "process " << q + 1 << ": " << arrivalTime.at(q) << " " << burstTime.at(q) << " " << priority.at(q) << "\n";
+            }
         }
         else if (scheduleAlgorithm == "SRTF")
         {
-
+            outputFile << "schedule algorithm: " << scheduleAlgorithm << "\n";
+            for (int q = 0; q < arrivalTime.size(); q++)
+            {
+                outputFile << "process " << q + 1 << ": " << arrivalTime.at(q) << " " << burstTime.at(q) << " " << priority.at(q) << "\n";
+            }
         }
         else if (scheduleAlgorithm == "P")
         {
-
+            outputFile << "schedule algorithm: " << scheduleAlgorithm << "\n";
+            for (int q = 0; q < arrivalTime.size(); q++)
+            {
+                outputFile << "process " << q + 1 << ": " << arrivalTime.at(q) << " " << burstTime.at(q) << " " << priority.at(q) << "\n";
+            }
         }
         else if (scheduleAlgorithm == "RR")
         {
-
+            outputFile << "schedule algorithm: " << scheduleAlgorithm << "\n";
+            for (int q = 0; q < arrivalTime.size(); q++)
+            {
+                outputFile << "process " << q + 1 << ": " << arrivalTime.at(q) << " " << burstTime.at(q) << " " << priority.at(q) << "\n";
+            }
         }
     }
 
