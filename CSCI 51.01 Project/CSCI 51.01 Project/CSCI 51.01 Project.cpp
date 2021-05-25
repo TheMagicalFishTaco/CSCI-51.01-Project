@@ -12,16 +12,16 @@ struct Process
     int arrivalTime, burstTime, priority;
     bool operator < (const Process& rhs) const 
     {
-        return priority < rhs.priority;
+        return arrivalTime < rhs.arrivalTime;
     }
 };
-
 
 int main()
 {    
     vector<Process> processVector;
 
-    int numTestCase, numProcess, inputArrival, inputBurst, inputPriority;
+    int numTestCase, inputArrival, inputBurst, inputPriority;
+    float time, numProcess;
     string scheduleAlgorithm;
 
     //creates the output text file
@@ -34,6 +34,7 @@ int main()
 
     for (int i = 0; i < numTestCase; i++)
     {    
+        time = 0;
         cin >> numProcess >> scheduleAlgorithm;
         processVector.clear();
 
@@ -73,10 +74,32 @@ int main()
         {
             outputFile << i+1 << " " << scheduleAlgorithm << "\n";
             sort(processVector.begin(), processVector.end());
-            for (int q = 0; q < processVector.size(); q++)
+            while (processVector.size() > 1)
             {
-                outputFile << "process " << q + 1 << ": " << processVector[q].arrivalTime << " " << processVector[q].burstTime << " " << processVector[q].priority << "\n";
+                if ((time + processVector[0].burstTime) < processVector[1].arrivalTime || processVector[0].priority < processVector[1].priority)
+                {
+                    outputFile << processVector[0].arrivalTime << " " << processVector[0].burstTime << " " << processVector[0].priority <<"X" << "\n";
+                    time = time + processVector[0].burstTime;
+                    processVector.erase(processVector.begin());
+                }
+                else
+                {
+                    if ((time > processVector[0].arrivalTime && time > processVector[1].arrivalTime) && processVector[0].priority > processVector[1].priority)
+                    {
+                        iter_swap(processVector.begin(), processVector.begin() + 1);
+                    }
+                    else
+                    {
+                        outputFile << processVector[0].arrivalTime << " " << processVector[1].arrivalTime - time << " " << processVector[0].priority << "\n";
+                        processVector[0].burstTime = (time + processVector[0].burstTime) - processVector[1].arrivalTime;
+                        time = time + (processVector[1].arrivalTime - time);
+                        iter_swap(processVector.begin(), processVector.begin() + 1);
+                    }
+                }
             }
+            outputFile << processVector[0].arrivalTime << " " << processVector[0].burstTime << " " << processVector[0].priority << "X" << "\n";
+            time = time + processVector[0].burstTime;
+            processVector.clear();
         }
         else if (scheduleAlgorithm == "RR")
         {
@@ -86,6 +109,10 @@ int main()
 
             }
         }
+        outputFile << "Total Time Elapsed: " << time <<" ns"<<"\n";
+        outputFile << "Total CPU Burst Time: " << time << " ns"<<"\n";
+        outputFile << "CPU Utilization: " << "\n";
+        outputFile << "Throughput: " << numProcess / time << " processes/ns"<< "\n";
     }
 
 }
