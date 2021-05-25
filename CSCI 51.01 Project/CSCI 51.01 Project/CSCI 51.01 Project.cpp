@@ -4,13 +4,23 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <algorithm>
 using namespace std;
+
+struct Process
+{
+    int arrivalTime, burstTime, priority;
+    bool operator < (const Process& rhs) const 
+    {
+        return priority < rhs.priority;
+    }
+};
+
 
 int main()
 {    
-    vector<int> arrivalTime(0);
-    vector<int> burstTime(0);
-    vector<int> priority(0);
+    vector<Process> processVector;
+
     int numTestCase, numProcess, inputArrival, inputBurst, inputPriority;
     string scheduleAlgorithm;
 
@@ -25,57 +35,55 @@ int main()
     for (int i = 0; i < numTestCase; i++)
     {    
         cin >> numProcess >> scheduleAlgorithm;
-        arrivalTime.clear();
-        burstTime.clear();
-        priority.clear();
+        processVector.clear();
 
-        //input loop for the processes, stores them into vectors
+        //input loop for the processes, stores them into vector
         for (int o = 0; o < numProcess; o++)
         {
             cin >> inputArrival >> inputBurst >> inputPriority;
-            arrivalTime.push_back(inputArrival);
-            burstTime.push_back(inputBurst);
-            priority.push_back(inputPriority);
+            processVector.push_back({ inputArrival, inputBurst, inputPriority });
         }
 
         if (scheduleAlgorithm == "FCFS")
         {
             outputFile << "schedule algorithm: " << scheduleAlgorithm << "\n";
-            for (int q = 0; q < arrivalTime.size(); q++)
+            for (int q = 0; q < processVector.size(); q++)
             {
-                outputFile << "process " << q+1 << ": " << arrivalTime.at(q) << " " << burstTime.at(q) << " " << priority.at(q) << "\n";
+
             }
         }
         else if (scheduleAlgorithm == "SJF")
         {
             outputFile << "schedule algorithm: " << scheduleAlgorithm << "\n";
-            for (int q = 0; q < arrivalTime.size(); q++)
+            for (int q = 0; q < processVector.size(); q++)
             {
-                outputFile << "process " << q + 1 << ": " << arrivalTime.at(q) << " " << burstTime.at(q) << " " << priority.at(q) << "\n";
+
             }
         }
         else if (scheduleAlgorithm == "SRTF")
         {
             outputFile << "schedule algorithm: " << scheduleAlgorithm << "\n";
-            for (int q = 0; q < arrivalTime.size(); q++)
+            for (int q = 0; q < processVector.size(); q++)
             {
-                outputFile << "process " << q + 1 << ": " << arrivalTime.at(q) << " " << burstTime.at(q) << " " << priority.at(q) << "\n";
+
             }
         }
+        //Lance's part
         else if (scheduleAlgorithm == "P")
         {
-            outputFile << "schedule algorithm: " << scheduleAlgorithm << "\n";
-            for (int q = 0; q < arrivalTime.size(); q++)
+            outputFile << i+1 << " " << scheduleAlgorithm << "\n";
+            sort(processVector.begin(), processVector.end());
+            for (int q = 0; q < processVector.size(); q++)
             {
-                outputFile << "process " << q + 1 << ": " << arrivalTime.at(q) << " " << burstTime.at(q) << " " << priority.at(q) << "\n";
+                outputFile << "process " << q + 1 << ": " << processVector[q].arrivalTime << " " << processVector[q].burstTime << " " << processVector[q].priority << "\n";
             }
         }
         else if (scheduleAlgorithm == "RR")
         {
             outputFile << "schedule algorithm: " << scheduleAlgorithm << "\n";
-            for (int q = 0; q < arrivalTime.size(); q++)
+            for (int q = 0; q < processVector.size(); q++)
             {
-                outputFile << "process " << q + 1 << ": " << arrivalTime.at(q) << " " << burstTime.at(q) << " " << priority.at(q) << "\n";
+
             }
         }
     }
