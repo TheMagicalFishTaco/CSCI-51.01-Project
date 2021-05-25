@@ -73,21 +73,30 @@ int main()
         else if (scheduleAlgorithm == "P")
         {
             outputFile << i+1 << " " << scheduleAlgorithm << "\n";
+            //sorts the stack by their arrival time
             sort(processVector.begin(), processVector.end());
+            //the final process is separated, i don't know why but it doesn't like it if I "process" it within this while loop
             while (processVector.size() > 1)
             {
+                //This will check if the process will complete before the next process arrives, or if the current process has a higher priority than the next process
+                //if either condition's good, it will finish the current process completely
                 if ((time + processVector[0].burstTime) < processVector[1].arrivalTime || processVector[0].priority < processVector[1].priority)
                 {
                     outputFile << processVector[0].arrivalTime << " " << processVector[0].burstTime << " " << processVector[0].priority <<"X" << "\n";
                     time = time + processVector[0].burstTime;
                     processVector.erase(processVector.begin());
                 }
+                //If the previous check fails, there are 2 scenarios:
+                //1. The next process will arrive while the current one is being processed and has a higher priority. In this case, you process as much as you can and then swap them around
+                //2. Both processes have arrived but the next process has a higher priority. In this case you immediately switch them around
                 else
                 {
+                    //This is scenario 2, both processes are ready and waiting but the next process in the queue has a higher priority
                     if ((time > processVector[0].arrivalTime && time > processVector[1].arrivalTime) && processVector[0].priority > processVector[1].priority)
                     {
                         iter_swap(processVector.begin(), processVector.begin() + 1);
                     }
+                    //This is scenario 1, process as much as you can before swapping to the newly arrived process
                     else
                     {
                         outputFile << processVector[0].arrivalTime << " " << processVector[1].arrivalTime - time << " " << processVector[0].priority << "\n";
@@ -97,6 +106,7 @@ int main()
                     }
                 }
             }
+            //The final process
             outputFile << processVector[0].arrivalTime << " " << processVector[0].burstTime << " " << processVector[0].priority << "X" << "\n";
             time = time + processVector[0].burstTime;
             processVector.clear();
@@ -109,6 +119,7 @@ int main()
 
             }
         }
+        //Output logs, add the others later
         outputFile << "Total Time Elapsed: " << time <<" ns"<<"\n";
         outputFile << "Total CPU Burst Time: " << time << " ns"<<"\n";
         outputFile << "CPU Utilization: " << "\n";
