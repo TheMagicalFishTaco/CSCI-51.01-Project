@@ -9,7 +9,7 @@ using namespace std;
 
 struct Process
 {
-    int arrivalTime, burstTime, priority;
+    int arrivalTime, burstTime, priority, processID;
     bool operator < (const Process& rhs) const 
     {
         return arrivalTime < rhs.arrivalTime;
@@ -42,7 +42,7 @@ int main()
         for (int o = 0; o < numProcess; o++)
         {
             cin >> inputArrival >> inputBurst >> inputPriority;
-            processVector.push_back({ inputArrival, inputBurst, inputPriority });
+            processVector.push_back({ inputArrival, inputBurst, inputPriority, o+1 });
         }
 
         if (scheduleAlgorithm == "FCFS")
@@ -82,7 +82,7 @@ int main()
                 //if either condition's good, it will finish the current process completely
                 if ((time + processVector[0].burstTime) < processVector[1].arrivalTime || processVector[0].priority < processVector[1].priority)
                 {
-                    outputFile << processVector[0].arrivalTime << " " << processVector[0].burstTime << " " << processVector[0].priority <<"X" << "\n";
+                    outputFile << time << " " << processVector[0].processID << " " << processVector[0].burstTime <<"X" << "\n";
                     time = time + processVector[0].burstTime;
                     processVector.erase(processVector.begin());
                 }
@@ -99,7 +99,7 @@ int main()
                     //This is scenario 1, process as much as you can before swapping to the newly arrived process
                     else
                     {
-                        outputFile << processVector[0].arrivalTime << " " << processVector[1].arrivalTime - time << " " << processVector[0].priority << "\n";
+                        outputFile << time << " " << processVector[0].processID << " " << processVector[1].arrivalTime - time << "\n";
                         processVector[0].burstTime = (time + processVector[0].burstTime) - processVector[1].arrivalTime;
                         time = time + (processVector[1].arrivalTime - time);
                         iter_swap(processVector.begin(), processVector.begin() + 1);
@@ -107,7 +107,7 @@ int main()
                 }
             }
             //The final process
-            outputFile << processVector[0].arrivalTime << " " << processVector[0].burstTime << " " << processVector[0].priority << "X" << "\n";
+            outputFile << time << " " << processVector[0].processID << " " << processVector[0].burstTime <<"X" << "\n";
             time = time + processVector[0].burstTime;
             processVector.clear();
         }
