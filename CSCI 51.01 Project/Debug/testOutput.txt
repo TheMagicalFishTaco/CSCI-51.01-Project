@@ -1,11 +1,11 @@
 1 P
-0 1 4X
-4 2 2
+1 1 4X
+5 2 1
 6 3 7X
-13 2 1X
-14 5 2X
-16 4 4X
-Total Time Elapsed: 20 ns
+13 2 2X
+15 5 2X
+17 4 4X
+Total Time Elapsed: 21 ns
 Total CPU Burst Time: 20 ns
-CPU Utilization: 
-Throughput: 0.25 processes/ns
+CPU Utilization: 95.2381%
+Throughput: 0.238095 processes/ns
