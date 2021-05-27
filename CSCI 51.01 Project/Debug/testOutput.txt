@@ -1,11 +1,32 @@
 1 P
-1 1 4X
-5 2 1
-6 3 7X
-13 2 2X
-15 5 2X
-17 4 4X
-Total Time Elapsed: 21 ns
-Total CPU Burst Time: 20 ns
-CPU Utilization: 95.2381%
-Throughput: 0.238095 processes/ns
+0 1 1
+1 2 1
+2 3 1
+3 4 1
+4 5 5X
+9 4 4X
+13 3 4X
+17 2 4X
+21 1 4X
+Total Time Elapsed: 25 ns
+Total CPU Burst Time: 25 ns
+CPU Utilization: 100%
+Throughput: 0.2 processes/ns
+Waiting Times: 
+ Process 1: 17 ns
+ Process 2: 13 ns
+ Process 3: 9 ns
+ Process 4: 4 ns
+Average Waiting Time: 
+Turnaround Times: 
+ Process 1: 16 ns
+ Process 2: 11 ns
+ Process 3: 6 ns
+ Process 4: 0 ns
+Average Turnaround Time: 
+Response Times: 
+ Process 1: 17 ns
+ Process 2: 13 ns
+ Process 3: 9 ns
+ Process 4: 4 ns
+Average Response Time: 
