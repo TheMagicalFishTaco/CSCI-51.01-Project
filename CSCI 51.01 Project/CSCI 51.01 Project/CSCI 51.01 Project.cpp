@@ -131,6 +131,7 @@ int main()
             }
             //The final process
             outputFile << time << " " << processVector[0].processID << " " << processVector[0].burstTime << "X" << endl;
+            waitingTimeList.push_back({ int(time), int(time) - processVector[0].arrivalTime, int(time), processVector[0].processID });
             time = time + processVector[0].burstTime;
             processVector.clear();
         }
@@ -142,6 +143,7 @@ int main()
 
             }
         }
+
         //Output logs, add the others later
         outputFile << "Total Time Elapsed: " << time << " ns" << endl;
         outputFile << "Total CPU Burst Time: " << totalBurstTime << " ns" << endl;
@@ -150,21 +152,21 @@ int main()
 
         sort(waitingTimeList.begin(), waitingTimeList.end(), compareProcessID);
         outputFile << "Waiting Times: " << endl;
-        for (int i = 0; i < numProcess-1; i++)
+        for (int i = 0; i <= numProcess-1; i++)
         {
             outputFile << " Process " << i+1 << ": " << waitingTimeList[i].waiting << " ns"<< endl;
         }
         outputFile << "Average Waiting Time: " << endl;
 
         outputFile << "Turnaround Times: " << endl;
-        for (int i = 0; i < numProcess-1; i++)
+        for (int i = 0; i <= numProcess-1; i++)
         {
             outputFile << " Process " << i+1 << ": " << waitingTimeList[i].turnaround << " ns" << endl;
         }
         outputFile << "Average Turnaround Time: " << endl;
 
         outputFile << "Response Times: " << endl;
-        for (int i = 0; i < numProcess-1; i++)
+        for (int i = 0; i <= numProcess-1; i++)
         {
             outputFile << " Process " << i+1 << ": " << waitingTimeList[i].response << " ns" << endl;
         }

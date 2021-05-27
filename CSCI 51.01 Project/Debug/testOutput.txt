@@ -13,20 +13,22 @@ Total CPU Burst Time: 25 ns
 CPU Utilization: 100%
 Throughput: 0.2 processes/ns
 Waiting Times: 
- Process 1: 17 ns
- Process 2: 13 ns
- Process 3: 9 ns
- Process 4: 4 ns
+ Process 1: 21 ns
+ Process 2: 17 ns
+ Process 3: 13 ns
+ Process 4: 9 ns
+ Process 5: 4 ns
 Average Waiting Time: 
 Turnaround Times: 
- Process 1: 16 ns
- Process 2: 11 ns
- Process 3: 6 ns
- Process 4: 0 ns
+ Process 1: 21 ns
+ Process 2: 16 ns
+ Process 3: 11 ns
+ Process 4: 6 ns
+ Process 5: 0 ns
 Average Turnaround Time: 
 Response Times: 
- Process 1: 17 ns
- Process 2: 13 ns
- Process 3: 9 ns
- Process 4: 4 ns
+ Process 1: 21 ns
+ Process 2: 17 ns
+ Process 3: 13 ns
+ Process 4: 9 ns
 Average Response Time: 
