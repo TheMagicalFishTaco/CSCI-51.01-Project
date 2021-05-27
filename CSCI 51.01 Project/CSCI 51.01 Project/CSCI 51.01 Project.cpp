@@ -1,5 +1,4 @@
 // CSCI 51.01 Project.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
 
 #include <iostream>
 #include <fstream>
@@ -28,9 +27,6 @@ int main()
     ofstream outputFile("testOutput.txt");
 
     cin >> numTestCase;
-
-
-
 
     for (int i = 0; i < numTestCase; i++)
     {    
@@ -82,7 +78,7 @@ int main()
                 //if either condition's good, it will finish the current process completely
                 if ((time + processVector[0].burstTime) < processVector[1].arrivalTime || processVector[0].priority < processVector[1].priority)
                 {
-                    outputFile << processVector[0].arrivalTime << " " << processVector[0].burstTime << " " << processVector[0].priority <<"X" << "\n";
+                    outputFile << time << " " << processVector[0].burstTime << " " << processVector[0].priority <<"X" << "\n";
                     time = time + processVector[0].burstTime;
                     processVector.erase(processVector.begin());
                 }
@@ -99,7 +95,7 @@ int main()
                     //This is scenario 1, process as much as you can before swapping to the newly arrived process
                     else
                     {
-                        outputFile << processVector[0].arrivalTime << " " << processVector[1].arrivalTime - time << " " << processVector[0].priority << "\n";
+                        outputFile << time << " " << processVector[1].arrivalTime - time << " " << processVector[0].priority << "\n";
                         processVector[0].burstTime = (time + processVector[0].burstTime) - processVector[1].arrivalTime;
                         time = time + (processVector[1].arrivalTime - time);
                         iter_swap(processVector.begin(), processVector.begin() + 1);
