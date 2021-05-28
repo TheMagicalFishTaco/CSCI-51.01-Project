@@ -1,0 +1,7 @@
+https://www.geeksforgeeks.org/vector-in-cpp-stl/
+https://www.cplusplus.com/reference/vector/vector/
+https://stackoverflow.com/questions/51729585/c-vectorbegin-not-working'
+https://stackoverflow.com/questions/33218031/print-a-vector-using-iterator-c/33218433
+https://afteracademy.com/blog/what-is-burst-arrival-exit-response-waiting-turnaround-time-and-throughput#:~:text=Waiting%20time%20is%20the%20total,Come%20First%20Serve%20scheduling%20algorithm.
+https://www.cplusplus.com/reference/algorithm/sort/
+https://www.informit.com/articles/article.aspx?p=480899&seqNum=4#:~:text=To%20get%20rid%20of%20all,which%20is%20short%20of%20truncate.

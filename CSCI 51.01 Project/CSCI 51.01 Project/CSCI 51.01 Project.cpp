@@ -1,5 +1,6 @@
-// CSCI 51.01 Project.cpp : This file contains the 'main' function.Program execution begins and ends there.
-//
+// CSCI 51.01 Project.cpp : This file contains the 'main' function. Program execution begins and ends there.
+// ignore line 3 this is for me only - Syl
+// run with C:\Users\Syl\Documents\AASylvane\"CSCI 51.01"\CSCI-51.01-Project\"CSCI 51.01 Project"\"CSCI 51.01 Project"\"CSCI 51.01 Project" < testInput.txt
 
 #include <iostream>
 #include <fstream>
@@ -39,7 +40,6 @@ int main()
 
     cin >> numTestCase;
 
-
     for (int i = 0; i < numTestCase; i++)
     {
         time = 0;
@@ -59,8 +59,20 @@ int main()
         //Syl's part
         if (scheduleAlgorithm == "FCFS")
         {
+            WaitingTime wtl; 
+            wtl.burst = 0;
+            wtl.waiting = 0;
+            wtl.turnaround = 0;
+            wtl.response = 0;
+
             outputFile << i + 1 << " " << scheduleAlgorithm << "\n";
             sort(processVector.begin(), processVector.end(), compareArrival);
+
+            for (int o = 0; o < numProcess; o++)
+            {
+                wtl.processID = processVector[o].processID;
+                waitingTimeList.push_back(wtl);
+            }
 
             for (auto j = processVector.begin(); j != processVector.end(); ++j) 
             {
@@ -78,21 +90,23 @@ int main()
 
                 /// Setting the metrics
                 // turnaroundTime -- equal to burstTime always
-                turnaroundTime = processVector[distance(processVector.begin(), j)].burstTime;
+                waitingTimeList[distance(processVector.begin(), j)].turnaround = processVector[distance(processVector.begin(), j)].burstTime;
 
-                if (processVector[distance(processVector.begin(), j)].arrivalTime > time)
-                {
-                    waitingTime = time - processVector[distance(processVector.begin(), j)].arrivalTime;
-                    responseTime = waitingTime;
-                }
-                else
-                {
-                    responseTime = 0;
-                    waitingTime = 0;
-                }
-                waitingTimeList.push_back({ turnaroundTime, waitingTime, turnaroundTime, responseTime, processVector[distance(processVector.begin(), j)].processID });
                 // waitingTime -- for FCFS this is just equal to the Response Time
                 // responseTime -- the only case where there is waiting time is if a new process arrives while old one is not yet done
+                for (auto k = processVector.begin(); k != processVector.end(); ++k) {
+                    if (processVector[distance(processVector.begin(), k)].arrivalTime < time && k > j)
+                    {
+                        waitingTimeList[distance(processVector.begin(), k)].waiting = time - processVector[distance(processVector.begin(), k)].arrivalTime;
+                        waitingTimeList[distance(processVector.begin(), k)].response = waitingTimeList[distance(processVector.begin(), k)].waiting;
+                    }
+                }
+                /*wtl.burst = turnaroundTime;
+                wtl.waiting = waitingTime;
+                wtl.turnaround = turnaroundTime;
+                wtl.response = waitingTime;
+                wtl.processID = processVector[distance(processVector.begin(), j)].processID;
+                waitingTimeList.push_back(wtl);*/
                 //for (auto k = processVector.begin(); k != processVector.end(); ++k) 
                 //{
                 //    if (processVector[distance(processVector.begin(), k)].arrivalTime < time && k > j) 
@@ -109,12 +123,31 @@ int main()
             }
         }
 
+        /*
         else if (scheduleAlgorithm == "SJF")
         {
             outputFile << "schedule algorithm: " << scheduleAlgorithm << endl;
             for (int q = 0; q < processVector.size(); q++)
             {
 
+                //output
+                outputFile << time << " " << processVector[distance(processVector.begin(), j)].PID << " " << processVector[distance(processVector.begin(), j)].burstTime << "X" << "\n";
+                
+                // adds burst Time to the time elapsed so far
+                time += processVector[distance(processVector.begin(), j)].burstTime;
+
+                /// Setting the metrics
+                // turnaroundTime -- equal to burstTime always
+                processVector[distance(processVector.begin(), j)].turnaroundTime = processVector[distance(processVector.begin(), j)].burstTime;
+                
+                // waitingTime -- for FCFS this is just equal to the Response Time
+                // responseTime -- the only case where there is waiting time is if a new process arrives while old one is not yet done
+                for (auto k = processVector.begin(); k != processVector.end(); ++k) {
+                    if (processVector[distance(processVector.begin(), k)].arrivalTime < time && k > j) {
+                        processVector[distance(processVector.begin(), k)].waitingTime = time - processVector[distance(processVector.begin(), k)].arrivalTime;
+                        processVector[distance(processVector.begin(), k)].responseTime = processVector[distance(processVector.begin(), k)].waitingTime;
+                    }
+                }     
             }
         }
         else if (scheduleAlgorithm == "SRTF")
@@ -123,11 +156,14 @@ int main()
             for (int q = 0; q < processVector.size(); q++)
             {
 
-            }
         }
+        */
+
         //Lance's part
         else if (scheduleAlgorithm == "P")
         {
+            WaitingTime wtl; 
+
             outputFile << i + 1 << " " << scheduleAlgorithm << endl;
             //sorts the stack by their arrival time
             sort(processVector.begin(), processVector.end(), compareArrival);
