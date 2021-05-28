@@ -32,7 +32,7 @@ int main()
     vector<Process> processVector;
     vector<WaitingTime> waitingTimeList;
 
-    int numTestCase, inputArrival, inputBurst, inputPriority, totalBurstTime, time, numProcess,turnaroundTime, responseTime, waitingTime, processID;;
+    int numTestCase, inputArrival, inputBurst, inputPriority, totalBurstTime, time, numProcess,turnaroundTime, responseTime, waitingTime, processID, quantum;
     string scheduleAlgorithm;
 
     //creates the output text file
@@ -48,6 +48,8 @@ int main()
         processVector.clear();
         waitingTimeList.clear();
 
+        if (scheduleAlgorithm == "RR") cin >> quantum;
+
         //input loop for the processes, stores them into vector
         for (int o = 0; o < numProcess; o++)
         {
@@ -56,7 +58,6 @@ int main()
             totalBurstTime = totalBurstTime + processVector[o].burstTime;
         }
 
-        //Syl's part
         if (scheduleAlgorithm == "FCFS")
         {
             WaitingTime wtl; 
@@ -66,7 +67,7 @@ int main()
             wtl.response = 0;
 
             outputFile << i + 1 << " " << scheduleAlgorithm << "\n";
-            sort(processVector.begin(), processVector.end(), compareArrival);
+            std::sort(processVector.begin(), processVector.end(), compareArrival);
 
             for (int o = 0; o < numProcess; o++)
             {
@@ -101,72 +102,16 @@ int main()
                         waitingTimeList[distance(processVector.begin(), k)].response = waitingTimeList[distance(processVector.begin(), k)].waiting;
                     }
                 }
-                /*wtl.burst = turnaroundTime;
-                wtl.waiting = waitingTime;
-                wtl.turnaround = turnaroundTime;
-                wtl.response = waitingTime;
-                wtl.processID = processVector[distance(processVector.begin(), j)].processID;
-                waitingTimeList.push_back(wtl);*/
-                //for (auto k = processVector.begin(); k != processVector.end(); ++k) 
-                //{
-                //    if (processVector[distance(processVector.begin(), k)].arrivalTime < time && k > j) 
-                //    {
-                //        //processVector[distance(processVector.begin(), k)].waitingTime = time - processVector[distance(processVector.begin(), k)].arrivalTime;
-                //        //processVector[distance(processVector.begin(), k)].responseTime = processVector[distance(processVector.begin(), k)].waitingTime;
-                //        waitingTimeList.push_back({ time - processVector[distance(processVector.begin(), k)].arrivalTime, turnaroundTime, time - processVector[distance(processVector.begin(), k)].arrivalTime, processVector[distance(processVector.begin(), k)].processID });
-                //    }
-                //    else
-                //    {
-                //        waitingTimeList.push_back({ 0, turnaroundTime, 0, processVector[distance(processVector.begin(), k)].processID });
-                //    }
-                //}
             }
         }
 
-        /*
-        else if (scheduleAlgorithm == "SJF")
-        {
-            outputFile << "schedule algorithm: " << scheduleAlgorithm << endl;
-            for (int q = 0; q < processVector.size(); q++)
-            {
-
-                //output
-                outputFile << time << " " << processVector[distance(processVector.begin(), j)].PID << " " << processVector[distance(processVector.begin(), j)].burstTime << "X" << "\n";
-                
-                // adds burst Time to the time elapsed so far
-                time += processVector[distance(processVector.begin(), j)].burstTime;
-
-                /// Setting the metrics
-                // turnaroundTime -- equal to burstTime always
-                processVector[distance(processVector.begin(), j)].turnaroundTime = processVector[distance(processVector.begin(), j)].burstTime;
-                
-                // waitingTime -- for FCFS this is just equal to the Response Time
-                // responseTime -- the only case where there is waiting time is if a new process arrives while old one is not yet done
-                for (auto k = processVector.begin(); k != processVector.end(); ++k) {
-                    if (processVector[distance(processVector.begin(), k)].arrivalTime < time && k > j) {
-                        processVector[distance(processVector.begin(), k)].waitingTime = time - processVector[distance(processVector.begin(), k)].arrivalTime;
-                        processVector[distance(processVector.begin(), k)].responseTime = processVector[distance(processVector.begin(), k)].waitingTime;
-                    }
-                }     
-            }
-        }
-        else if (scheduleAlgorithm == "SRTF")
-        {
-            outputFile << "schedule algorithm: " << scheduleAlgorithm << endl;
-            for (int q = 0; q < processVector.size(); q++)
-            {
-
-        }
-        */
-
-        //Lance's part
         else if (scheduleAlgorithm == "P")
         {
             WaitingTime wtl; 
 
             outputFile << i + 1 << " " << scheduleAlgorithm << endl;
             //sorts the stack by their arrival time
-            sort(processVector.begin(), processVector.end(), compareArrival);
+            std::sort(processVector.begin(), processVector.end(), compareArrival);
             //the final process is separated, i don't know why but it doesn't like it if I "process" it within this while loop
             while (processVector.size() > 1)
             {
@@ -216,20 +161,80 @@ int main()
             waitingTimeList.push_back({ processVector[0].burstTime, time, time - processVector[0].arrivalTime, time, processVector[0].processID });
             time = time + processVector[0].burstTime;
         }
+
         else if (scheduleAlgorithm == "RR")
         {
-            outputFile << "schedule algorithm: " << scheduleAlgorithm << endl;
-            for (int q = 0; q < processVector.size(); q++)
-            {
+            vector<Process> RRQueue;
+            vector<Process> RRWaitingQueue;
+            WaitingTime wtl; 
+            wtl.burst = 0;
+            wtl.waiting = 0;
+            wtl.turnaround = 0;
+            wtl.response = 0;
 
+            outputFile << i + 1 << " " << scheduleAlgorithm << "\n";
+            std::sort(processVector.begin(), processVector.end(), compareArrival);
+
+            for (int o = 0; o < numProcess; o++)
+            {
+                wtl.processID = processVector[o].processID;
+                waitingTimeList.push_back(wtl);
             }
+
+            while (!RRQueue.empty() || !processVector.empty()) {
+                cout << "RRQueue: " << RRQueue.empty() << " processes: " << processVector.empty() << endl;
+
+                //check the RRQueue first if there's another process already there
+                if (!RRQueue.empty() && time < processVector[0].arrivalTime) {
+                    
+                    outputFile << time << " " << RRQueue[0].processID << " ";
+                    if (RRQueue[0].burstTime > quantum){
+                        outputFile << quantum << "\n";
+                        time += quantum;
+                        processVector[0].burstTime -= quantum;
+                        RRQueue.push_back(RRQueue[0]);
+                        RRQueue.erase(RRQueue.begin());
+                    }
+                    else {
+                        outputFile << RRQueue[0].burstTime << "X\n";
+                        time += RRQueue[0].burstTime;
+                        RRQueue.erase(RRQueue.begin());
+                    }
+                } else {
+                    //fast forward time if process hasn't arrived yet
+                    if (time < processVector[0].arrivalTime) 
+                    {
+                        time = processVector[0].arrivalTime;
+                    }
+                    //responseTime WIP
+                    //waitingTimeList[0].response = time;
+
+                    outputFile << time << " " << processVector[0].processID << " ";
+                    if (processVector[0].burstTime > quantum){
+                        outputFile << quantum << "\n";
+                        time += quantum;
+                        processVector[0].burstTime -= quantum;
+                        RRQueue.push_back(processVector[0]);
+                        processVector.erase(processVector.begin());
+                    }
+                    else {
+                        outputFile << processVector[0].burstTime << "X\n";
+                        time += processVector[0].burstTime;
+                        processVector.erase(processVector.begin());
+                    }
+                }
+
+                //waiting time
+                //turnaround time
+            }
+
         }
 
         //Syl's output logs
         int summationBT = 0, summationWT = 0, summationTT = 0, summationRT = 0;
 
         // re-sorting everything just to make life easier when displaying the metrics for each process
-        sort(waitingTimeList.begin(), waitingTimeList.end(), compareProcessID);
+        std::sort(waitingTimeList.begin(), waitingTimeList.end(), compareProcessID);
 
         //gets the sum of the metrics, which will be later divided by the vector size to get average
         for (auto i = waitingTimeList.begin(); i != waitingTimeList.end(); ++i) {
