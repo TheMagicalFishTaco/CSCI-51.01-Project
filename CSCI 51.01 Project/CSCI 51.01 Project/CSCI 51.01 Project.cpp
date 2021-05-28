@@ -13,24 +13,25 @@ struct Process
 };
 struct WaitingTime
 {
-    int waiting, turnaround, response, processID;
+    int burst, waiting, turnaround, response, processID;
 };
 
 bool compareArrival(Process i1, Process i2)
 {
     return (i1.arrivalTime < i2.arrivalTime);
 }
+
 bool compareProcessID(WaitingTime i1, WaitingTime i2)
 {
     return (i1.processID < i2.processID);
 }
+
 int main()
 {
     vector<Process> processVector;
     vector<WaitingTime> waitingTimeList;
 
-    int numTestCase, inputArrival, inputBurst, inputPriority, totalBurstTime;
-    float time, numProcess;
+    int numTestCase, inputArrival, inputBurst, inputPriority, totalBurstTime, time, numProcess,turnaroundTime, responseTime, waitingTime, processID;;
     string scheduleAlgorithm;
 
     //creates the output text file
@@ -45,6 +46,7 @@ int main()
         totalBurstTime = 0;
         cin >> numProcess >> scheduleAlgorithm;
         processVector.clear();
+        waitingTimeList.clear();
 
         //input loop for the processes, stores them into vector
         for (int o = 0; o < numProcess; o++)
@@ -54,15 +56,59 @@ int main()
             totalBurstTime = totalBurstTime + processVector[o].burstTime;
         }
 
-
+        //Syl's part
         if (scheduleAlgorithm == "FCFS")
         {
-            outputFile << "schedule algorithm: " << scheduleAlgorithm << endl;
-            for (int q = 0; q < processVector.size(); q++)
-            {
+            outputFile << i + 1 << " " << scheduleAlgorithm << "\n";
+            sort(processVector.begin(), processVector.end(), compareArrival);
 
+            for (auto j = processVector.begin(); j != processVector.end(); ++j) 
+            {
+                // this is to fast forward the time in case processes haven't arrived yet
+                if (time < processVector[distance(processVector.begin(), j)].arrivalTime) 
+                {
+                    time = processVector[distance(processVector.begin(), j)].arrivalTime;
+                }
+
+                //output
+                outputFile << time << " " << processVector[distance(processVector.begin(), j)].processID << " " << processVector[distance(processVector.begin(), j)].burstTime << "X" << "\n";
+
+                // adds burst Time to the time elapsed so far
+                time += processVector[distance(processVector.begin(), j)].burstTime;
+
+                /// Setting the metrics
+                // turnaroundTime -- equal to burstTime always
+                turnaroundTime = processVector[distance(processVector.begin(), j)].burstTime;
+
+                if (processVector[distance(processVector.begin(), j)].arrivalTime > time)
+                {
+                    waitingTime = time - processVector[distance(processVector.begin(), j)].arrivalTime;
+                    responseTime = waitingTime;
+                }
+                else
+                {
+                    responseTime = 0;
+                    waitingTime = 0;
+                }
+                waitingTimeList.push_back({ turnaroundTime, waitingTime, turnaroundTime, responseTime, processVector[distance(processVector.begin(), j)].processID });
+                // waitingTime -- for FCFS this is just equal to the Response Time
+                // responseTime -- the only case where there is waiting time is if a new process arrives while old one is not yet done
+                //for (auto k = processVector.begin(); k != processVector.end(); ++k) 
+                //{
+                //    if (processVector[distance(processVector.begin(), k)].arrivalTime < time && k > j) 
+                //    {
+                //        //processVector[distance(processVector.begin(), k)].waitingTime = time - processVector[distance(processVector.begin(), k)].arrivalTime;
+                //        //processVector[distance(processVector.begin(), k)].responseTime = processVector[distance(processVector.begin(), k)].waitingTime;
+                //        waitingTimeList.push_back({ time - processVector[distance(processVector.begin(), k)].arrivalTime, turnaroundTime, time - processVector[distance(processVector.begin(), k)].arrivalTime, processVector[distance(processVector.begin(), k)].processID });
+                //    }
+                //    else
+                //    {
+                //        waitingTimeList.push_back({ 0, turnaroundTime, 0, processVector[distance(processVector.begin(), k)].processID });
+                //    }
+                //}
             }
         }
+
         else if (scheduleAlgorithm == "SJF")
         {
             outputFile << "schedule algorithm: " << scheduleAlgorithm << endl;
@@ -96,7 +142,7 @@ int main()
                     if ((time + processVector[0].burstTime) < processVector[1].arrivalTime || processVector[0].priority < processVector[1].priority)
                     {
                         outputFile << time << " " << processVector[0].processID << " " << processVector[0].burstTime << "X" << endl;
-                        waitingTimeList.push_back({int(time), int(time) - processVector[0].arrivalTime, int(time), processVector[0].processID});
+                        waitingTimeList.push_back({processVector[0].burstTime,time, time - processVector[0].arrivalTime, time, processVector[0].processID});
                         time = time + processVector[0].burstTime;
                         processVector.erase(processVector.begin());
                     }
@@ -131,9 +177,8 @@ int main()
             }
             //The final process
             outputFile << time << " " << processVector[0].processID << " " << processVector[0].burstTime << "X" << endl;
-            waitingTimeList.push_back({ int(time), int(time) - processVector[0].arrivalTime, int(time), processVector[0].processID });
+            waitingTimeList.push_back({ processVector[0].burstTime, time, time - processVector[0].arrivalTime, time, processVector[0].processID });
             time = time + processVector[0].burstTime;
-            processVector.clear();
         }
         else if (scheduleAlgorithm == "RR")
         {
@@ -144,32 +189,41 @@ int main()
             }
         }
 
-        //Output logs, add the others later
-        outputFile << "Total Time Elapsed: " << time << " ns" << endl;
-        outputFile << "Total CPU Burst Time: " << totalBurstTime << " ns" << endl;
-        outputFile << "CPU Utilization: " << (totalBurstTime / time) * 100 << "%" << endl;
-        outputFile << "Throughput: " << numProcess / time << " processes/ns" << endl;
+        //Syl's output logs
+        int summationBT = 0, summationWT = 0, summationTT = 0, summationRT = 0;
 
+        // re-sorting everything just to make life easier when displaying the metrics for each process
         sort(waitingTimeList.begin(), waitingTimeList.end(), compareProcessID);
-        outputFile << "Waiting Times: " << endl;
-        for (int i = 0; i <= numProcess-1; i++)
-        {
-            outputFile << " Process " << i+1 << ": " << waitingTimeList[i].waiting << " ns"<< endl;
-        }
-        outputFile << "Average Waiting Time: " << endl;
 
-        outputFile << "Turnaround Times: " << endl;
-        for (int i = 0; i <= numProcess-1; i++)
-        {
-            outputFile << " Process " << i+1 << ": " << waitingTimeList[i].turnaround << " ns" << endl;
+        //gets the sum of the metrics, which will be later divided by the vector size to get average
+        for (auto i = waitingTimeList.begin(); i != waitingTimeList.end(); ++i) {
+            summationBT += (*i).burst;
+            summationWT += (*i).waiting;
+            summationTT += (*i).turnaround;
+            summationRT += (*i).response;
         }
-        outputFile << "Average Turnaround Time: " << endl;
 
-        outputFile << "Response Times: " << endl;
-        for (int i = 0; i <= numProcess-1; i++)
-        {
-            outputFile << " Process " << i+1 << ": " << waitingTimeList[i].response << " ns" << endl;
+        // Output logs
+
+        outputFile << "Total Time Elapsed: " << time << " ns" << "\n";
+        outputFile << "Total CPU Burst Time: " << summationBT << " ns" << "\n";
+        outputFile << "CPU Utilization: " << (int)((float)summationBT / (float)time * 100) << "%\n";
+        outputFile << "Throughput: " << (float)waitingTimeList.size() / time << " processes/ns" << "\n";
+        outputFile << "Waiting times:\n";
+        for (int i = 0; i < waitingTimeList.size(); i++) {
+            outputFile << " Process " << i + 1 << ": " << waitingTimeList[i].waiting << "ns\n";
         }
-        outputFile << "Average Response Time: " << endl;
+        outputFile << "Average waiting time: " << (float)summationWT / waitingTimeList.size() << "ns\n";
+        outputFile << "Turnaround times:\n";
+        for (int i = 0; i < waitingTimeList.size(); i++) {
+            outputFile << " Process " << i + 1 << ": " << waitingTimeList[i].turnaround << "ns\n";
+        }
+        outputFile << "Average turnaround time: " << (float)summationTT / waitingTimeList.size() << "ns\n";
+        outputFile << "Response times:\n";
+        for (int i = 0; i < waitingTimeList.size(); i++) {
+            outputFile << " Process " << i + 1 << ": " << waitingTimeList[i].response << "ns\n";
+        }
+        outputFile << "Average response time: " << (float)summationRT / waitingTimeList.size() << "ns\n";
     }
+    return 0;
 }
