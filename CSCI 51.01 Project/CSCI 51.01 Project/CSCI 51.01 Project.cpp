@@ -164,8 +164,9 @@ int main()
 
         else if (scheduleAlgorithm == "RR")
         {
-            vector<Process> RRQueue;
-            vector<Process> RRWaitingQueue;
+            vector<Process> RRQueue, tempProcessVector;
+            vector<WaitingTime> tempRRWaiting1, tempRRWaiting2;
+            tempProcessVector = processVector;
             WaitingTime wtl; 
             wtl.burst = 0;
             wtl.waiting = 0;
@@ -178,56 +179,78 @@ int main()
             for (int o = 0; o < numProcess; o++)
             {
                 wtl.processID = processVector[o].processID;
-                waitingTimeList.push_back(wtl);
+                tempRRWaiting1.push_back(wtl);
             }
 
             while (!RRQueue.empty() || !processVector.empty()) {
-                cout << "RRQueue: " << RRQueue.empty() << " processes: " << processVector.empty() << endl;
-
                 //check the RRQueue first if there's another process already there
                 if (!RRQueue.empty() && time < processVector[0].arrivalTime) {
                     
                     outputFile << time << " " << RRQueue[0].processID << " ";
+                   
                     if (RRQueue[0].burstTime > quantum){
                         outputFile << quantum << "\n";
                         time += quantum;
-                        processVector[0].burstTime -= quantum;
+                        RRQueue[0].burstTime -= quantum;
+
                         RRQueue.push_back(RRQueue[0]);
+                        tempRRWaiting2.push_back(tempRRWaiting2[0]);
                         RRQueue.erase(RRQueue.begin());
-                    }
-                    else {
+                        tempRRWaiting2.erase(tempRRWaiting2.begin());
+                    } else {
                         outputFile << RRQueue[0].burstTime << "X\n";
                         time += RRQueue[0].burstTime;
+                        
+                        //setting turnaroundTime
+                        tempRRWaiting2[0].turnaround = time - RRQueue[0].arrivalTime;
+
+                        waitingTimeList.push_back(tempRRWaiting2[0]);
                         RRQueue.erase(RRQueue.begin());
+                        tempRRWaiting2.erase(tempRRWaiting2.begin());
                     }
-                } else {
+                 } else {
                     //fast forward time if process hasn't arrived yet
                     if (time < processVector[0].arrivalTime) 
                     {
                         time = processVector[0].arrivalTime;
                     }
-                    //responseTime WIP
-                    //waitingTimeList[0].response = time;
+                    
+                    //responseTime
+                    tempRRWaiting1[0].response = time - processVector[0].arrivalTime;
 
                     outputFile << time << " " << processVector[0].processID << " ";
+                    
                     if (processVector[0].burstTime > quantum){
                         outputFile << quantum << "\n";
                         time += quantum;
                         processVector[0].burstTime -= quantum;
+                        
                         RRQueue.push_back(processVector[0]);
+                        tempRRWaiting2.push_back(tempRRWaiting1[0]);
                         processVector.erase(processVector.begin());
+                        tempRRWaiting1.erase(tempRRWaiting1.begin());
                     }
                     else {
                         outputFile << processVector[0].burstTime << "X\n";
                         time += processVector[0].burstTime;
+                        
+                        //setting turnaroundTime
+                        tempRRWaiting1[0].turnaround = time - processVector[0].arrivalTime;           
+
+                        waitingTimeList.push_back(tempRRWaiting1[0]);
                         processVector.erase(processVector.begin());
+                        tempRRWaiting1.erase(tempRRWaiting1.begin());
                     }
                 }
-
-                //waiting time
-                //turnaround time
             }
 
+            //setting waitingTime and burstTime (for waitingTimeList)
+            sort(waitingTimeList.begin(), waitingTimeList.end(), compareProcessID);
+            sort(waitingTimeList.begin(), waitingTimeList.end(), compareProcessID);
+            for (auto i = waitingTimeList.begin(); i != waitingTimeList.end(); ++i) {
+                waitingTimeList[distance(waitingTimeList.begin(), i)].waiting = waitingTimeList[distance(waitingTimeList.begin(), i)].turnaround - tempProcessVector[distance(waitingTimeList.begin(), i)].burstTime;
+                waitingTimeList[distance(waitingTimeList.begin(), i)].burst = tempProcessVector[distance(waitingTimeList.begin(), i)].burstTime;
+            }
         }
 
         //Syl's output logs
