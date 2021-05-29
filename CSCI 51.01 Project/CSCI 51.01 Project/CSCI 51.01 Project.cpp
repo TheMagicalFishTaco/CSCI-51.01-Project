@@ -101,6 +101,7 @@ int main()
                         waitingTimeList[distance(processVector.begin(), k)].waiting = time - processVector[distance(processVector.begin(), k)].arrivalTime;
                         waitingTimeList[distance(processVector.begin(), k)].response = waitingTimeList[distance(processVector.begin(), k)].waiting;
                     }
+                    waitingTimeList[distance(processVector.begin(), k)].burst = processVector[distance(processVector.begin(), k)].burstTime;
                 }
             }
         }
