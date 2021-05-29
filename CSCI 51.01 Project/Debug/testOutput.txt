@@ -1,87 +1,32 @@
-1 FCFS
-10 2 70X
-80 3 40X
-120 1 10X
-Total Time Elapsed: 130 ns
-Total CPU Burst Time: 0 ns
-CPU Utilization: 0%
-Throughput: 0.0230769 processes/ns
-Waiting times:
- Process 1: 20ns
- Process 2: 0ns
- Process 3: 40ns
-Average waiting time: 20ns
-Turnaround times:
- Process 1: 10ns
- Process 2: 70ns
- Process 3: 40ns
-Average turnaround time: 40ns
-Response times:
- Process 1: 20ns
- Process 2: 0ns
- Process 3: 40ns
-Average response time: 20ns
-2 P
-0 1 1
-1 2 1
-2 3 1
-3 4 1
-4 5 5X
-9 4 4X
-13 3 4X
-17 2 4X
-21 1 4X
-Total Time Elapsed: 25 ns
-Total CPU Burst Time: 21 ns
-CPU Utilization: 84%
-Throughput: 0.2 processes/ns
-Waiting times:
- Process 1: 21ns
- Process 2: 17ns
- Process 3: 13ns
- Process 4: 9ns
- Process 5: 4ns
-Average waiting time: 12.8ns
-Turnaround times:
- Process 1: 21ns
- Process 2: 16ns
- Process 3: 11ns
- Process 4: 6ns
- Process 5: 0ns
-Average turnaround time: 10.8ns
-Response times:
- Process 1: 21ns
- Process 2: 17ns
- Process 3: 13ns
- Process 4: 9ns
- Process 5: 4ns
-Average response time: 12.8ns
-3 RR
-0 1 25
-25 2 25
-50 1 5X
-55 4 15X
-70 2 20X
-90 3 10X
-Total Time Elapsed: 100 ns
-Total CPU Burst Time: 100 ns
+1 P
+0 1 4X
+4 2 2
+6 3 7X
+13 2 1X
+14 5 2X
+16 4 4X
+Total Time Elapsed: 20 ns
+Total CPU Burst Time: 20 ns
 CPU Utilization: 100%
-Throughput: 0.04 processes/ns
+Throughput: 0.25 processes/ns
 Waiting times:
- Process 1: 25ns
- Process 2: 20ns
- Process 3: 15ns
- Process 4: 0ns
-Average waiting time: 15ns
+ Process 1: 0ns
+ Process 2: 11ns
+ Process 3: 0ns
+ Process 4: 5ns
+ Process 5: 2ns
+Average waiting time: 3.6ns
 Turnaround times:
- Process 1: 55ns
- Process 2: 65ns
- Process 3: 25ns
- Process 4: 15ns
-Average turnaround time: 40ns
+ Process 1: 4ns
+ Process 2: 14ns
+ Process 3: 7ns
+ Process 4: 9ns
+ Process 5: 4ns
+Average turnaround time: 7.6ns
 Response times:
  Process 1: 0ns
- Process 2: 0ns
- Process 3: 15ns
- Process 4: 0ns
-Average response time: 3.75ns
+ Process 2: 4ns
+ Process 3: 0ns
+ Process 4: 5ns
+ Process 5: 2ns
+Average response time: 2.2ns
