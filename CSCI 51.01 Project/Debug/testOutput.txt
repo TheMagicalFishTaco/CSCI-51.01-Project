@@ -3,8 +3,8 @@
 80 3 40X
 120 1 10X
 Total Time Elapsed: 130 ns
-Total CPU Burst Time: 0 ns
-CPU Utilization: 0%
+Total CPU Burst Time: 120 ns
+CPU Utilization: 92%
 Throughput: 0.0230769 processes/ns
 Waiting times:
  Process 1: 20ns
