@@ -155,43 +155,70 @@ int main()
 
         else if (scheduleAlgorithm == "SRTF")
         {
+            vector<Process> waitingQueue;
+            vector<WaitingTime> waitingTimeList;
+
+            bool start = false;
+            int round = 0;
+
             outputFile << "schedule algorithm: " << scheduleAlgorithm << endl;
 
             //sorts the stack by their arrival time
             sort(processVector.begin(), processVector.end(), compareArrival);
 
+            for (int counter = 0; counter < numProcess; counter++)
+            {
+                waitingTimeList.push_back({ 0, 0, 0, 0, counter + 1 });
+            }
+
             while (processVector.size() > 1)
             {
+
+                if (round > 0) {
+                    start = true;
+                }
+
                 int queueStart = 0;
                 int queueEnd = 0;
                 int waiting = 0;
 
+                waitingQueue.clear();
+
                 // checks for where the waiting queue ends and sorts the waiting queue from lowest to highest burst time
                 for (int i = 0; i < processVector.size(); i++) {
                     if (processVector[i].arrivalTime <= time) {
-                        waiting = waiting + 1;
-                        queueEnd = queueEnd + 1;
+                        waitingQueue.push_back(processVector[i]);
+                        //queueEnd = queueEnd + 1;
                     }
                 }
-                if (queueEnd == processVector.size() - 1){
-                    sort(processVector.begin(), processVector.end(), compareBurst);  
+                cout << "queue: ";
+                for (int i = 0; i < waitingQueue.size(); i++) {
+                    cout << waitingQueue[i].processID << " ";
                 }
-                else {
-                    sort(processVector.begin(), processVector.begin() + queueEnd, compareBurst);
-                }
+                cout << endl;
+
+                sort(waitingQueue.begin(), waitingQueue.end(), compareBurst);
+
 
                 cout << "time: " << time << endl;
-                cout << "waiting: " << waiting << endl;
+
                 //This will check if the process will complete before the next process arrives, or if the current process has a lower burst time than the next process
                 //if either condition's good, it will finish the current process completely
-                if (waiting > 1 && (((time + processVector[0].burstTime) < processVector[1].arrivalTime) || processVector[0].burstTime < processVector[1].burstTime))
+                if (waitingQueue.size() > 1 && (((time + processVector[0].burstTime) < processVector[1].arrivalTime) || processVector[0].burstTime < processVector[1].burstTime))
                 {
-
                     outputFile << time << " " << processVector[0].processID << " " << processVector[0].burstTime <<"X" << "\n";
                     waitingTimeList.push_back({processVector[0].burstTime,time, time - processVector[0].arrivalTime, time, processVector[0].processID});
+                    waitingTimeList[(processVector[0].processID) - 1].response = time - processVector[0].arrivalTime;
                     time = time + processVector[0].burstTime;
-                    processVector.erase(processVector.begin());
+                    
 
+                    waitingTimeList[(processVector[0].processID) - 1].burst += processVector[0].burstTime;
+                    waitingTimeList[(processVector[0].processID) - 1].turnaround = (time - processVector[0].arrivalTime);
+                    waitingTimeList[(processVector[0].processID) - 1].processID = processVector[0].processID;
+                    waitingTimeList[(processVector[0].processID) - 1].waiting = (time - (processVector[0].arrivalTime + waitingTimeList[(processVector[0].processID) - 1].burst));
+
+                    processVector.erase(processVector.begin());
+                    
                     cout << "finished process" << endl;
                     for (int i = 0; i < processVector.size(); i++) {
                         cout << processVector[i].processID << " ";
@@ -206,32 +233,9 @@ int main()
                     //This is scenario 2, both processes are ready and waiting but the next process in the queue has less burst time
                     if ((time >= processVector[0].arrivalTime && time >= processVector[1].arrivalTime) && processVector[0].burstTime > processVector[1].burstTime)
                     {
-                        // queueStart = processVector[0].processID;
-                        /* if (processVector[processVector.size() - 1].arrivalTime > time) {
-                            iter_swap(processVector.begin(),processVector.begin() + 1);
-                        }
-                        else {
-                            processVector.push_back(processVector[0]);
-                            processVector.erase(processVector.begin());
-                        }*/
 
-                        /* while (processVector[1].processID != queueStart) {
-                            processVector.push_back(processVector[1]);
-                            processVector.erase(processVector.begin() + 1);
-                        }*/
-
-                        /*for (int i = 0; i < processVector.size(); i++) {
-                            // cout << processVector[i].processID << " ";
-                            if (processVector[i].arrivalTime <= time) {
-                                queueEnd = queueEnd + 1;
-                            }
-                        }
-                        if (queueEnd == processVector.size()) {
-                            sort(processVector.begin(), processVector.end(), compareBurst);  
-                        }
-                        else {
-                            sort(processVector.begin(), processVector.begin() + queueEnd, compareBurst);
-                        }*/
+                        processVector.push_back(processVector[0]);
+                        processVector.erase(processVector.begin());
 
                         cout << "waiting process" << endl;
                         for (int i = 0; i < processVector.size(); i++) {
@@ -242,37 +246,39 @@ int main()
                     //This is scenario 1, process as much as you can before swapping to the newly arrived process
                     else
                     {   
-                        outputFile << time << " " << processVector[0].processID << " " << processVector[1].arrivalTime - time << "\n";
-                        processVector[0].burstTime = (time + processVector[0].burstTime) - processVector[1].arrivalTime;
-                        time = time + (processVector[1].arrivalTime - time);
 
-                        if (processVector[processVector.size() - 1].arrivalTime > time) {
+                        if (processVector[processVector.size() - 1].arrivalTime > time && waitingQueue.size() == 1 && start == true) {
+
+                            outputFile << time << " " << processVector[0].processID << " " << processVector[2].arrivalTime - time << "\n";
+                            waitingTimeList[(processVector[0].processID) - 1].burst += processVector[0].burstTime;
+                            processVector[0].burstTime = (time + processVector[0].burstTime) - processVector[2].arrivalTime;
+                            waitingTimeList[(processVector[0].processID) - 1].response = time - processVector[0].arrivalTime;
+                            time = time + (processVector[2].arrivalTime - time);
+
                             iter_swap(processVector.begin(),processVector.begin() + 1);
+                            cout << "swap" << endl;
+                        }
+                        else if (processVector[processVector.size() - 1].arrivalTime > time) {
+                            outputFile << time << " " << processVector[0].processID << " " << processVector[1].arrivalTime - time << "\n";
+                            waitingTimeList[(processVector[0].processID) - 1].burst += processVector[0].burstTime;
+                            processVector[0].burstTime = (time + processVector[0].burstTime) - processVector[1].arrivalTime;
+                            waitingTimeList[(processVector[0].processID) - 1].response = time - processVector[0].arrivalTime;
+                            time = time + (processVector[1].arrivalTime - time);
+
+
+                            iter_swap(processVector.begin(),processVector.begin() + 1);
+                            cout << "swap" << endl;
                         }
                         else {
+                            outputFile << time << " " << processVector[0].processID << " " << processVector[1].arrivalTime - time << "\n";
+                            waitingTimeList[(processVector[0].processID) - 1].burst += processVector[0].burstTime;
+                            processVector[0].burstTime = (time + processVector[0].burstTime) - processVector[1].arrivalTime;
+                            waitingTimeList[(processVector[0].processID) - 1].response = time - processVector[0].arrivalTime;
+                            time = time + (processVector[1].arrivalTime - time);
+
                             processVector.push_back(processVector[0]);
                             processVector.erase(processVector.begin());
                         }
-
-                        // queueStart = processVector[0].processID;
-                        
-                        /* while (processVector[1].processID != queueStart) {
-                            processVector.push_back(processVector[1]);
-                            processVector.erase(processVector.begin() + 1);
-                        }*/
-
-                        /*for (int i = 0; i < processVector.size(); i++) {
-                            // cout << processVector[i].processID << " ";
-                            if (processVector[i].arrivalTime <= time) {
-                                queueEnd = queueEnd + 1;
-                            }
-                        }
-                        if (queueEnd == processVector.size()) {
-                            sort(processVector.begin(), processVector.end(), compareBurst);  
-                        }
-                        else {
-                            sort(processVector.begin(), processVector.begin() + queueEnd, compareBurst);
-                        }*/
 
                         cout << "trying to finish process" << endl;
                         for (int i = 0; i < processVector.size(); i++) {
@@ -282,13 +288,24 @@ int main()
 
                     }
                 }
+
+                round ++;
             }
             //The final process
             outputFile << time << " " << processVector[0].processID << " " << processVector[0].burstTime << "X" << "\n";
-            waitingTimeList.push_back({ processVector[0].burstTime, time, time - processVector[0].arrivalTime, time, processVector[0].processID });
+            if (waitingTimeList[(processVector[0].processID) - 1].response == 0)
+            {
+                waitingTimeList[(processVector[0].processID) - 1].response = time - processVector[0].arrivalTime;
+            }
             time = time + processVector[0].burstTime;
-            processVector.clear();
+            waitingTimeList[(processVector[0].processID) - 1].burst += processVector[0].burstTime;
+            waitingTimeList[(processVector[0].processID) - 1].turnaround = (time - processVector[0].arrivalTime);
+            waitingTimeList[(processVector[0].processID) - 1].processID = processVector[0].processID;
+            waitingTimeList[(processVector[0].processID) - 1].waiting = (time - (processVector[0].arrivalTime + waitingTimeList[(processVector[0].processID) - 1].burst)); 
+            
+            //processVector.clear();
         }
+
         //Lance's part
         else if (scheduleAlgorithm == "P")
         {
