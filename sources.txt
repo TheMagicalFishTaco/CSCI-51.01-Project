@@ -7,3 +7,5 @@ https://www.cplusplus.com/reference/algorithm/sort/
 https://www.informit.com/articles/article.aspx?p=480899&seqNum=4#:~:text=To%20get%20rid%20of%20all,which%20is%20short%20of%20truncate.
 https://www.geeksforgeeks.org/cpu-scheduling-in-operating-systems/
 https://afteracademy.com/blog/what-is-burst-arrival-exit-response-waiting-turnaround-time-and-throughput#:~:text=It%20can%20be%20defined%20as,18%2F3%20%3D%206%20seconds
+https://www.edureka.co/blog/vectors-in-cpp/#:~:text=Vectors%20in%20C%2B%2B%20are%20sequence,as%20efficiently%20as%20in%20arrays.
+https://www.guru99.com/priority-scheduling-program.html
