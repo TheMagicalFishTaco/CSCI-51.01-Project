@@ -1,6 +1,4 @@
 // CSCI 51.01 Project.cpp : This file contains the 'main' function. Program execution begins and ends there.
-// ignore line 3 this is for me only - Syl
-// run with C:\Users\Syl\Documents\AASylvane\"CSCI 51.01"\CSCI-51.01-Project\"CSCI 51.01 Project"\"CSCI 51.01 Project"\"CSCI 51.01 Project" < testInput.txt
 
 #include <iostream>
 #include <fstream>
