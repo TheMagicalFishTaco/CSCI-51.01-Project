@@ -304,17 +304,17 @@ int main()
         outputFile << "CPU Utilization: " << (int)((float)summationBT / (float)time * 100) << "%\n";
         outputFile << "Throughput: " << (float)waitingTimeList.size() / time << " processes/ns" << "\n";
         outputFile << "Waiting times:\n";
-        for (int i = 0; i < waitingTimeList.size(); i++) {
+        for (int i = 0; i < int(waitingTimeList.size()); i++) {
             outputFile << " Process " << i + 1 << ": " << waitingTimeList[i].waiting << "ns\n";
         }
         outputFile << "Average waiting time: " << (float)summationWT / waitingTimeList.size() << "ns\n";
         outputFile << "Turnaround times:\n";
-        for (int i = 0; i < waitingTimeList.size(); i++) {
+        for (int i = 0; i < int(waitingTimeList.size()); i++) {
             outputFile << " Process " << i + 1 << ": " << waitingTimeList[i].turnaround << "ns\n";
         }
         outputFile << "Average turnaround time: " << (float)summationTT / waitingTimeList.size() << "ns\n";
         outputFile << "Response times:\n";
-        for (int i = 0; i < waitingTimeList.size(); i++) {
+        for (int i = 0; i < int(waitingTimeList.size()); i++) {
             outputFile << " Process " << i + 1 << ": " << waitingTimeList[i].response << "ns\n";
         }
         outputFile << "Average response time: " << (float)summationRT / waitingTimeList.size() << "ns\n";
