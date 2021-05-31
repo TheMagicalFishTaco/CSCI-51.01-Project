@@ -110,16 +110,17 @@ int main()
             outputFile << i + 1 << " " << scheduleAlgorithm << endl;
             //sorts the stack by their arrival time
             sort(processVector.begin(), processVector.end(), compareArrival);
+            //creates the vector that stores the performance metric values
             for (int counter = 0; counter < numProcess; counter++)
             {
                 waitingTimeList.push_back({ 0, 0, 0, NULL, counter + 1 });
             }
-            //the final process is separated, i don't know why but it doesn't like it if I "process" it within this while loop
+            //Since it's reliant on being able to compare processes within a vector, the final process is separated and the while loop is only until 2 processes are present
+            //Otherwise it would throw an indexOutOfBounds error
             while (processVector.size() > 1)
             {
-                //finds the process with the highest priority
+                //Checks if one of the upcoming processes have a higher priority than the one in index 0
                 int indexOfHigherCurrentPriority = 0;
-
                 for (int g = (processVector.size()-1); g > 0; --g)
                 {
                     if (processVector[g].priority < indexOfHigherCurrentPriority)
@@ -148,10 +149,10 @@ int main()
                     }
                     //If the previous check fails, there are 2 scenarios:
                     //1. The is a process that will arrive while the current one is being processed and has a higher priority. In this case, you process as much as you can and then swap them around
-                    //2. There are processes ready but the next process has a higher priority. In this case you immediately switch them around
+                    //2. There are processes ready but the next process has a higher priority. In this case you shuffle the vector around to slowly move the priority process into index 0
                     else
                     {
-                        //This is scenario 2, both processes are ready and waiting but the next process in the queue has a higher priority
+                        //This is scenario 2, 2 processes are ready but the one in index 0 is not the highest priority
                         if (time >= processVector[0].arrivalTime && time >= processVector[indexOfHigherCurrentPriority].arrivalTime)
                         {
                             processVector.push_back(processVector[0]);
