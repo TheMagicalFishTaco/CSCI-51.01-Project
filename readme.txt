@@ -21,3 +21,4 @@ HOW TO RUN PROGRAM:
 
 ASSUMPTIONS:
 1. It is up to the user to create a [sample input file name].txt as none is provided in the submission. The txt file used for the input should be properly formatted according to the specifications given for this project. Also, only valid inputs must be used.
+2. For Priority, it is assumed that priority 1 is the highest priority.
