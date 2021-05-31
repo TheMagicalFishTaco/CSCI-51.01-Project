@@ -1,6 +1,4 @@
 // CSCI 51.01 Project.cpp : This file contains the 'main' function. Program execution begins and ends there.
-// ignore line 3 this is for me only - Syl
-// run with C:\Users\Syl\Documents\AASylvane\"CSCI 51.01"\CSCI-51.01-Project\"CSCI 51.01 Project"\"CSCI 51.01 Project"\"CSCI 51.01 Project" < testInput.txt
 
 #include <iostream>
 #include <fstream>
@@ -91,7 +89,7 @@ int main()
 
                 /// Setting the metrics
                 // turnaroundTime -- equal to burstTime always
-                waitingTimeList[distance(processVector.begin(), j)].turnaround = processVector[distance(processVector.begin(), j)].burstTime;
+                waitingTimeList[distance(processVector.begin(), j)].turnaround = time - processVector[distance(processVector.begin(), j)].arrivalTime;
 
                 // waitingTime -- for FCFS this is just equal to the Response Time
                 // responseTime -- the only case where there is waiting time is if a new process arrives while old one is not yet done
@@ -183,33 +181,9 @@ int main()
                 tempRRWaiting1.push_back(wtl);
             }
 
-            while (!RRQueue.empty() || !processVector.empty()) {
+            while (!RRQueue.empty() || !processVector.empty()) {                
                 //check the RRQueue first if there's another process already there
-                if (!RRQueue.empty() && time < processVector[0].arrivalTime) {
-                    
-                    outputFile << time << " " << RRQueue[0].processID << " ";
-                   
-                    if (RRQueue[0].burstTime > quantum){
-                        outputFile << quantum << "\n";
-                        time += quantum;
-                        RRQueue[0].burstTime -= quantum;
-
-                        RRQueue.push_back(RRQueue[0]);
-                        tempRRWaiting2.push_back(tempRRWaiting2[0]);
-                        RRQueue.erase(RRQueue.begin());
-                        tempRRWaiting2.erase(tempRRWaiting2.begin());
-                    } else {
-                        outputFile << RRQueue[0].burstTime << "X\n";
-                        time += RRQueue[0].burstTime;
-                        
-                        //setting turnaroundTime
-                        tempRRWaiting2[0].turnaround = time - RRQueue[0].arrivalTime;
-
-                        waitingTimeList.push_back(tempRRWaiting2[0]);
-                        RRQueue.erase(RRQueue.begin());
-                        tempRRWaiting2.erase(tempRRWaiting2.begin());
-                    }
-                 } else {
+                if (!processVector.empty() && time >=  processVector[0].arrivalTime) {
                     //fast forward time if process hasn't arrived yet
                     if (time < processVector[0].arrivalTime) 
                     {
@@ -242,6 +216,32 @@ int main()
                         processVector.erase(processVector.begin());
                         tempRRWaiting1.erase(tempRRWaiting1.begin());
                     }
+
+                } else {
+
+                    outputFile << time << " " << RRQueue[0].processID << " ";
+                   
+                    if (RRQueue[0].burstTime > quantum){
+                        outputFile << quantum << "\n";
+                        time += quantum;
+                        RRQueue[0].burstTime -= quantum;
+
+                        RRQueue.push_back(RRQueue[0]);
+                        tempRRWaiting2.push_back(tempRRWaiting2[0]);
+                        RRQueue.erase(RRQueue.begin());
+                        tempRRWaiting2.erase(tempRRWaiting2.begin());
+                    } else {
+                        outputFile << RRQueue[0].burstTime << "X\n";
+                        time += RRQueue[0].burstTime;
+                        
+                        //setting turnaroundTime
+                        tempRRWaiting2[0].turnaround = time - RRQueue[0].arrivalTime;
+
+                        waitingTimeList.push_back(tempRRWaiting2[0]);
+                        RRQueue.erase(RRQueue.begin());
+                        tempRRWaiting2.erase(tempRRWaiting2.begin());
+                    }
+                    
                 }
             }
 
