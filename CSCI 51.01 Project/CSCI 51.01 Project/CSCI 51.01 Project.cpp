@@ -32,7 +32,7 @@ int main()
     vector<Process> processVector;
     vector<WaitingTime> waitingTimeList;
 
-    int numTestCase, inputArrival, inputBurst, inputPriority, totalBurstTime, time, numProcess,turnaroundTime, responseTime, waitingTime, processID, quantum;
+    int numTestCase, inputArrival, inputBurst, inputPriority, totalBurstTime, time, numProcess, quantum;
     string scheduleAlgorithm;
 
     //creates the output text file
@@ -108,60 +108,44 @@ int main()
         //Lance's part
         else if (scheduleAlgorithm == "P")
         {
-            WaitingTime wtl;
-            vector<Process> readyQueue;
-
             outputFile << i + 1 << " " << scheduleAlgorithm << endl;
             //sorts the stack by their arrival time
             sort(processVector.begin(), processVector.end(), compareArrival);
             for (int counter = 0; counter < numProcess; counter++)
             {
-                waitingTimeList.push_back({ 0, 0, 0, 0, counter + 1 });
+                waitingTimeList.push_back({ 0, 0, 0, NULL, counter + 1 });
             }
             //the final process is separated, i don't know why but it doesn't like it if I "process" it within this while loop
             while (processVector.size() > 1)
             {
+                //finds the process with the highest priority
+                int indexOfHigherCurrentPriority = 0;
+
+                for (int g = (processVector.size()-1); g > 0; --g)
+                {
+                    if (processVector[g].priority < indexOfHigherCurrentPriority)
+                    {
+                        indexOfHigherCurrentPriority = g;
+                        break;
+                    }
+                }
                 //Makes sure that the process has actually arrived first
                 if (time >= processVector[0].arrivalTime)
                 {
-                    //This will check if the process will complete before the next process arrives, or if the current process has a higher priority than the next process
+                    //This will check if the process will complete before the higher priority process will arrive, or if the current process has a higher priority than the next process
                     //if either condition's good, it will finish the current process completely
-                    if ((time + processVector[0].burstTime) < processVector[1].arrivalTime || processVector[0].priority < processVector[1].priority)
+                    if (indexOfHigherCurrentPriority == 0 || (time + processVector[0].burstTime) < processVector[indexOfHigherCurrentPriority].arrivalTime)
                     {
-                        //Prioritize checking the processes that are in the priority queue
-                        if (readyQueue.size() > 0 && readyQueue[0].priority <= processVector[0].priority)
-                        {
-                            outputFile << time << " " << readyQueue[0].processID << " " << readyQueue[0].burstTime << "X" << endl;
-                            if (waitingTimeList[(readyQueue[0].processID) - 1].response == 0)
-                            {
-                                waitingTimeList[(readyQueue[0].processID) - 1].response = time - readyQueue[0].arrivalTime;
-                            }
-                            time += readyQueue[0].burstTime;
+                        outputFile << time << " " << processVector[0].processID << " " << processVector[0].burstTime << "X" << endl;
 
-                            if (waitingTimeList[(readyQueue[0].processID) - 1].burst == 0)
-                            {
-                                waitingTimeList[(readyQueue[0].processID) - 1].burst += readyQueue[0].burstTime;
-                            }
-                            waitingTimeList[(readyQueue[0].processID) - 1].turnaround = (time - readyQueue[0].arrivalTime);
-                            waitingTimeList[(readyQueue[0].processID) - 1].processID = readyQueue[0].processID;
-                            waitingTimeList[(readyQueue[0].processID) - 1].waiting = (time - (readyQueue[0].arrivalTime + waitingTimeList[(readyQueue[0].processID) - 1].burst));
-                            readyQueue.erase(readyQueue.begin());
-                        }
-                        else
-                        {
-                            outputFile << time << " " << processVector[0].processID << " " << processVector[0].burstTime << "X" << endl;
-                            if (waitingTimeList[(processVector[0].processID) - 1].response == 0)
-                            {
-                                waitingTimeList[(processVector[0].processID) - 1].response = time - processVector[0].arrivalTime;
-                            }
-                            time += processVector[0].burstTime;
+                        time += processVector[0].burstTime;
 
-                            waitingTimeList[(processVector[0].processID) - 1].burst += processVector[0].burstTime;
-                            waitingTimeList[(processVector[0].processID) - 1].turnaround = (time - processVector[0].arrivalTime);
-                            waitingTimeList[(processVector[0].processID) - 1].processID = processVector[0].processID;
-                            waitingTimeList[(processVector[0].processID) - 1].waiting = (time - (processVector[0].arrivalTime + waitingTimeList[(processVector[0].processID) - 1].burst));
-                            processVector.erase(processVector.begin());
-                        }
+                        waitingTimeList[(processVector[0].processID) - 1].burst += processVector[0].burstTime;
+                        waitingTimeList[(processVector[0].processID) - 1].turnaround = (time - processVector[0].arrivalTime);
+                        waitingTimeList[(processVector[0].processID) - 1].processID = processVector[0].processID;
+                        waitingTimeList[(processVector[0].processID) - 1].waiting = (time - (processVector[0].arrivalTime + waitingTimeList[(processVector[0].processID) - 1].burst));
+                        processVector.erase(processVector.begin());
+
                     }
                     //If the previous check fails, there are 2 scenarios:
                     //1. The is a process that will arrive while the current one is being processed and has a higher priority. In this case, you process as much as you can and then swap them around
@@ -169,20 +153,20 @@ int main()
                     else
                     {
                         //This is scenario 2, both processes are ready and waiting but the next process in the queue has a higher priority
-                        if ((time >= processVector[0].arrivalTime && time >= processVector[1].arrivalTime) && processVector[0].priority > processVector[1].priority)
+                        if (time >= processVector[0].arrivalTime && time >= processVector[indexOfHigherCurrentPriority].arrivalTime)
                         {
                             processVector.push_back(processVector[0]);
-                            processVector.erase(processVector.begin());
+                            processVector.erase(processVector.begin());    
                         }
-                        //This is scenario 1, process as much as you can before putting it in the ready queue
+                        //This is scenario 1, process as much as you can before putting it in the back of the queue again
                         else
                         {
-                            outputFile << time << " " << processVector[0].processID << " " << processVector[1].arrivalTime - time << endl;
-                            waitingTimeList[(processVector[0].processID) - 1].burst += processVector[0].burstTime;
-                            processVector[0].burstTime = (time + processVector[0].burstTime) - processVector[1].arrivalTime;
+                            outputFile << time << " " << processVector[0].processID << " " << processVector[indexOfHigherCurrentPriority].arrivalTime - time << endl;                            
+                            processVector[0].burstTime = (time + processVector[0].burstTime) - processVector[indexOfHigherCurrentPriority].arrivalTime;
+                            waitingTimeList[(processVector[0].processID) - 1].burst += processVector[indexOfHigherCurrentPriority].arrivalTime - time;
                             waitingTimeList[(processVector[0].processID) - 1].response = time - processVector[0].arrivalTime;
-                            time = time + (processVector[1].arrivalTime - time);
-                            readyQueue.push_back(processVector[0]);
+                            time = time + (processVector[indexOfHigherCurrentPriority].arrivalTime - time);
+                            processVector.push_back(processVector[0]);
                             processVector.erase(processVector.begin());
                         }
                     }
@@ -190,7 +174,7 @@ int main()
                 //If the process hasn't arrived yet, just increase time by 1
                 else
                 {
-                    time = time++;
+                    time = processVector[0].arrivalTime;
                 }
 
             }
