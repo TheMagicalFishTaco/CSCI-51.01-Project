@@ -115,7 +115,7 @@ int main()
             //creates the vector that stores the performance metric values
             for (int counter = 0; counter < numProcess; counter++)
             {
-                waitingTimeList.push_back({ 0, 0, 0, NULL, counter + 1 });
+                waitingTimeList.push_back({ 0, 0, 0, -1, counter + 1 });
             }
             //Since it's reliant on being able to compare processes within a vector, the final process is separated and the while loop is only until 2 processes are present
             //Otherwise it would throw an indexOutOfBounds error
@@ -138,6 +138,10 @@ int main()
                     //if either condition's good, it will finish the current process completely
                     if (indexOfHigherCurrentPriority == 0 || (time + processVector[0].burstTime) < processVector[indexOfHigherCurrentPriority].arrivalTime)
                     {
+                        if (waitingTimeList[(processVector[0].processID) - 1].response == -1)
+                        {
+                            waitingTimeList[(processVector[0].processID) - 1].response = time - processVector[0].arrivalTime;
+                        }
                         outputFile << time << " " << processVector[0].processID << " " << processVector[0].burstTime << "X" << endl;
 
                         time += processVector[0].burstTime;
@@ -169,7 +173,10 @@ int main()
                             outputFile << time << " " << processVector[0].processID << " " << processVector[indexOfHigherCurrentPriority].arrivalTime - time << endl;                            
                             processVector[0].burstTime = (time + processVector[0].burstTime) - processVector[indexOfHigherCurrentPriority].arrivalTime;
                             waitingTimeList[(processVector[0].processID) - 1].burst += processVector[indexOfHigherCurrentPriority].arrivalTime - time;
-                            waitingTimeList[(processVector[0].processID) - 1].response = time - processVector[0].arrivalTime;
+                            if (waitingTimeList[(processVector[0].processID) - 1].response == -1)
+                            {
+                                waitingTimeList[(processVector[0].processID) - 1].response = time - processVector[0].arrivalTime;
+                            }
                             time = time + (processVector[indexOfHigherCurrentPriority].arrivalTime - time);
 
                             tempVector.push_back(processVector[0]);
@@ -188,7 +195,7 @@ int main()
             }
             //The final process
             outputFile << time << " " << processVector[0].processID << " " << processVector[0].burstTime << "X" << endl;
-            if (waitingTimeList[(processVector[0].processID) - 1].response == 0)
+            if (waitingTimeList[(processVector[0].processID) - 1].response == -1)
             {
                 waitingTimeList[(processVector[0].processID) - 1].response = time - processVector[0].arrivalTime;
             }
