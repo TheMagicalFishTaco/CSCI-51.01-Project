@@ -107,6 +107,8 @@ int main()
         //Lance's part
         else if (scheduleAlgorithm == "P")
         {
+            vector<Process> tempVector;
+
             outputFile << i + 1 << " " << scheduleAlgorithm << endl;
             //sorts the stack by their arrival time
             sort(processVector.begin(), processVector.end(), compareArrival);
@@ -121,9 +123,9 @@ int main()
             {
                 //Checks if one of the upcoming processes have a higher priority than the one in index 0
                 int indexOfHigherCurrentPriority = 0;
-                for (int g = (processVector.size()-1); g > 0; --g)
+                for (int g = 0; g <= int((processVector.size())-1); ++g)
                 {
-                    if (processVector[g].priority < indexOfHigherCurrentPriority)
+                    if (processVector[g].priority < processVector[indexOfHigherCurrentPriority].priority)
                     {
                         indexOfHigherCurrentPriority = g;
                         break;
@@ -153,10 +155,13 @@ int main()
                     else
                     {
                         //This is scenario 2, 2 processes are ready but the one in index 0 is not the highest priority
+                        //Swap them around
                         if (time >= processVector[0].arrivalTime && time >= processVector[indexOfHigherCurrentPriority].arrivalTime)
                         {
-                            processVector.push_back(processVector[0]);
-                            processVector.erase(processVector.begin());    
+                            tempVector.push_back(processVector[0]);
+                            processVector[0] = processVector[indexOfHigherCurrentPriority];
+                            processVector[indexOfHigherCurrentPriority] = tempVector[0];
+                            tempVector.erase(tempVector.begin());
                         }
                         //This is scenario 1, process as much as you can before putting it in the back of the queue again
                         else
@@ -166,8 +171,11 @@ int main()
                             waitingTimeList[(processVector[0].processID) - 1].burst += processVector[indexOfHigherCurrentPriority].arrivalTime - time;
                             waitingTimeList[(processVector[0].processID) - 1].response = time - processVector[0].arrivalTime;
                             time = time + (processVector[indexOfHigherCurrentPriority].arrivalTime - time);
-                            processVector.push_back(processVector[0]);
-                            processVector.erase(processVector.begin());
+
+                            tempVector.push_back(processVector[0]);
+                            processVector[0] = processVector[indexOfHigherCurrentPriority];
+                            processVector[indexOfHigherCurrentPriority] = tempVector[0];
+                            tempVector.erase(tempVector.begin());
                         }
                     }
                 }
@@ -186,7 +194,7 @@ int main()
             }
             time = time + processVector[0].burstTime;
 
-
+            //Setting the performance metrics of the final process
             waitingTimeList[(processVector[0].processID) - 1].burst += processVector[0].burstTime;
             waitingTimeList[(processVector[0].processID) - 1].turnaround = (time - processVector[0].arrivalTime);
             waitingTimeList[(processVector[0].processID) - 1].processID = processVector[0].processID;
