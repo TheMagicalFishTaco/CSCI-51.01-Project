@@ -150,7 +150,7 @@ int main()
             bool start = false;
             int round = 0;
 
-            outputFile << "schedule algorithm: " << scheduleAlgorithm << endl;
+            outputFile << i + 1 << " " << scheduleAlgorithm << endl;
 
             //sorts the stack by their arrival time
             sort(processVector.begin(), processVector.end(), compareArrival);

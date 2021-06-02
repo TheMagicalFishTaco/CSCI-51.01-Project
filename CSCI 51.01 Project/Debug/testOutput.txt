@@ -1,4 +1,80 @@
-1 P
+1 FCFS
+10 1 20X
+30 2 40X
+70 3 20X
+Total Time Elapsed: 90 ns
+Total CPU Burst Time: 80 ns
+CPU Utilization: 88%
+Throughput: 0.0333333 processes/ns
+Waiting times:
+ Process 1: 0ns
+ Process 2: 20ns
+ Process 3: 40ns
+Average waiting time: 20ns
+Turnaround times:
+ Process 1: 20ns
+ Process 2: 60ns
+ Process 3: 60ns
+Average turnaround time: 46.6667ns
+Response times:
+ Process 1: 0ns
+ Process 2: 20ns
+ Process 3: 40ns
+Average response time: 20ns
+2 SJF
+0 2 20X
+20 3 40X
+60 1 50X
+Total Time Elapsed: 110 ns
+Total CPU Burst Time: 110 ns
+CPU Utilization: 100%
+Throughput: 0.0272727 processes/ns
+Waiting times:
+ Process 1: 60ns
+ Process 2: 0ns
+ Process 3: 0ns
+Average waiting time: 20ns
+Turnaround times:
+ Process 1: 110ns
+ Process 2: 20ns
+ Process 3: 40ns
+Average turnaround time: 56.6667ns
+Response times:
+ Process 1: 60ns
+ Process 2: 0ns
+ Process 3: 0ns
+Average response time: 20ns
+3 SRTF
+0 1 20
+20 3 5X
+25 1 10
+35 2 5
+40 4 1X
+41 2 5X
+46 1 20X
+Total Time Elapsed: 66 ns
+Total CPU Burst Time: 66 ns
+CPU Utilization: 100%
+Throughput: 0.0606061 processes/ns
+Waiting times:
+ Process 1: 16ns
+ Process 2: 1ns
+ Process 3: 0ns
+ Process 4: 0ns
+Average waiting time: 4.25ns
+Turnaround times:
+ Process 1: 66ns
+ Process 2: 11ns
+ Process 3: 5ns
+ Process 4: 1ns
+Average turnaround time: 20.75ns
+Response times:
+ Process 1: 0ns
+ Process 2: 0ns
+ Process 3: 0ns
+ Process 4: 0ns
+Average response time: 0ns
+4 P
 0 1 20
 20 3 5X
 25 1 10X
@@ -22,3 +98,35 @@ Response times:
  Process 2: 25ns
  Process 3: 0ns
 Average response time: 8.33333ns
+5 RR
+0 1 10
+10 2 10
+20 3 5X
+25 1 10X
+35 4 10
+45 2 10
+55 4 5X
+60 2 10
+70 2 1X
+Total Time Elapsed: 71 ns
+Total CPU Burst Time: 71 ns
+CPU Utilization: 100%
+Throughput: 0.056338 processes/ns
+Waiting times:
+ Process 1: 15ns
+ Process 2: 40ns
+ Process 3: 10ns
+ Process 4: 15ns
+Average waiting time: 20ns
+Turnaround times:
+ Process 1: 35ns
+ Process 2: 71ns
+ Process 3: 15ns
+ Process 4: 30ns
+Average turnaround time: 37.75ns
+Response times:
+ Process 1: 0ns
+ Process 2: 10ns
+ Process 3: 10ns
+ Process 4: 5ns
+Average response time: 6.25ns
