@@ -10,3 +10,4 @@ https://afteracademy.com/blog/what-is-burst-arrival-exit-response-waiting-turnar
 https://www.edureka.co/blog/vectors-in-cpp/#:~:text=Vectors%20in%20C%2B%2B%20are%20sequence,as%20efficiently%20as%20in%20arrays.
 https://www.guru99.com/priority-scheduling-program.html
 http://faculty.salina.k-state.edu/tim/ossg/Process/scheduler/metrics.html
+https://www.guru99.com/shortest-job-first-sjf-scheduling.html?fbclid=IwAR0iZJJP6GaeYuLlhWLgR3gVrGjMM1b5AWRQ1M6tODr-YtQwcEFuhRmkaJ0#:~:text=Shortest%20Job%20First%20(SJF)%20is,for%20other%20processes%20awaiting%20execution
