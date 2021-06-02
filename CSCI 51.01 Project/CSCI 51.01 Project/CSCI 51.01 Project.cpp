@@ -104,6 +104,105 @@ int main()
             }
         }
 
+
+        else if (scheduleAlgorithm == "SRTF")
+        {
+            vector<Process> waitingQueue, tempVector;
+
+            bool start = false;
+            int round = 0;
+
+            outputFile << "schedule algorithm: " << scheduleAlgorithm << endl;
+
+            //sorts the stack by their arrival time
+            sort(processVector.begin(), processVector.end(), compareArrival);
+
+            for (int counter = 0; counter < numProcess; counter++)
+            {
+                waitingTimeList.push_back({ 0, 0, 0, -1, counter + 1 });
+            }
+
+            while (processVector.size() > 1)
+            {
+                int indexOfShorterBurst = 0;
+                for (int g = 0; g <= int((processVector.size()) - 1); ++g)
+                {
+                    if (processVector[g].burstTime < processVector[indexOfShorterBurst].burstTime)
+                    {
+                        indexOfShorterBurst = g;
+                        break;
+                    }
+                }
+
+                //This will check if the process will complete before the next process arrives, or if the current process has a lower burst time than the next process
+                //if either condition's good, it will finish the current process completely
+                if (indexOfShorterBurst == 0 || (time + processVector[0].burstTime) < processVector[indexOfShorterBurst].arrivalTime)
+                {
+                    if (waitingTimeList[(processVector[0].processID) - 1].response == -1)
+                    {
+                        waitingTimeList[(processVector[0].processID) - 1].response = time - processVector[0].arrivalTime;
+                    }
+                    outputFile << time << " " << processVector[0].processID << " " << processVector[0].burstTime << "X" << "\n";
+                    time = time + processVector[0].burstTime;
+
+                    waitingTimeList[(processVector[0].processID) - 1].burst += processVector[0].burstTime;
+                    waitingTimeList[(processVector[0].processID) - 1].turnaround = (time - processVector[0].arrivalTime);
+                    waitingTimeList[(processVector[0].processID) - 1].processID = processVector[0].processID;
+                    waitingTimeList[(processVector[0].processID) - 1].waiting = (time - (processVector[0].arrivalTime + waitingTimeList[(processVector[0].processID) - 1].burst));
+                    processVector.erase(processVector.begin());
+
+                }
+                //If the previous check fails, there are 2 scenarios:
+                //1. The next process will arrive while the current one is being processed and has less burst time. In this case, you process as much as you can and then swap them around
+                //2. Both processes have arrived but the next process has less burst time. In this case you immediately switch them around
+                else
+                {
+                    //This is scenario 2, both processes are ready and waiting but the next process in the queue has less burst time
+                    if (time >= processVector[0].arrivalTime && time >= processVector[indexOfShorterBurst].arrivalTime)
+                    {
+                        tempVector.push_back(processVector[0]);
+                        processVector[0] = processVector[indexOfShorterBurst];
+                        processVector[indexOfShorterBurst] = tempVector[0];
+                        tempVector.erase(tempVector.begin());
+                    }
+                    //This is scenario 1, process as much as you can before swapping to the newly arrived process
+                    else
+                    {
+
+                        outputFile << time << " " << processVector[0].processID << " " << processVector[indexOfShorterBurst].arrivalTime - time << endl;
+                        processVector[0].burstTime = (time + processVector[0].burstTime) - processVector[indexOfShorterBurst].arrivalTime;
+                        waitingTimeList[(processVector[0].processID) - 1].burst += processVector[indexOfShorterBurst].arrivalTime - time;
+                        if (waitingTimeList[(processVector[0].processID) - 1].response == -1)
+                        {
+                            waitingTimeList[(processVector[0].processID) - 1].response = time - processVector[0].arrivalTime;
+                        }
+                        time = time + (processVector[indexOfShorterBurst].arrivalTime - time);
+
+                        tempVector.push_back(processVector[0]);
+                        processVector[0] = processVector[indexOfShorterBurst];
+                        processVector[indexOfShorterBurst] = tempVector[0];
+                        tempVector.erase(tempVector.begin());
+                    }
+                }
+
+                round++;
+            }
+            //The final process
+            outputFile << time << " " << processVector[0].processID << " " << processVector[0].burstTime << "X" << endl;
+            if (waitingTimeList[(processVector[0].processID) - 1].response == -1)
+            {
+                waitingTimeList[(processVector[0].processID) - 1].response = time - processVector[0].arrivalTime;
+            }
+            time = time + processVector[0].burstTime;
+
+            //Setting the performance metrics of the final process
+            waitingTimeList[(processVector[0].processID) - 1].burst += processVector[0].burstTime;
+            waitingTimeList[(processVector[0].processID) - 1].turnaround = (time - processVector[0].arrivalTime);
+            waitingTimeList[(processVector[0].processID) - 1].processID = processVector[0].processID;
+            waitingTimeList[(processVector[0].processID) - 1].waiting = (time - (processVector[0].arrivalTime + waitingTimeList[(processVector[0].processID) - 1].burst));
+
+        }
+
         //Lance's part
         else if (scheduleAlgorithm == "P")
         {
