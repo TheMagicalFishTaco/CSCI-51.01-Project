@@ -196,9 +196,32 @@ int main()
                     outputFile << time << " " << processVector[0].processID << " ";
                     
                     if (processVector[0].burstTime > quantum){
-                        outputFile << quantum << "\n";
-                        time += quantum;
-                        processVector[0].burstTime -= quantum;
+                        
+                        if (processVector.size() == 1 && RRQueue.empty()) {
+                            outputFile << processVector[0].burstTime << "X\n";
+                            time += processVector[0].burstTime;
+                            processVector[0].burstTime -= processVector[0].burstTime;
+                        } else if (((time + quantum) < processVector[1].arrivalTime) && RRQueue.empty()) {
+                            int totalBurst = 0;
+                            while ( time < processVector[1].arrivalTime) {
+                                if ((time + quantum) < processVector[1].arrivalTime) {
+                                    time += quantum;
+                                    totalBurst += quantum;
+                                    processVector[0].burstTime -= quantum;
+                                } else {
+                                    time += processVector[0].burstTime;
+                                    totalBurst += processVector[0].burstTime;
+                                    processVector[0].burstTime -= processVector[0].burstTime;
+                                }    
+                            }
+                            outputFile << totalBurst << "X\n";                            
+                        }
+                        else {
+                            outputFile << quantum << "\n";
+                            time += quantum;
+                            processVector[0].burstTime -= quantum;
+                        }
+        
                         
                         RRQueue.push_back(processVector[0]);
                         tempRRWaiting2.push_back(tempRRWaiting1[0]);
@@ -219,19 +242,43 @@ int main()
 
                 } else {
 
-                    outputFile << time << " " << RRQueue[0].processID << " ";
+                    if (RRQueue[0].burstTime != 0) outputFile << time << " " << RRQueue[0].processID << " ";
                    
                     if (RRQueue[0].burstTime > quantum){
-                        outputFile << quantum << "\n";
-                        time += quantum;
-                        RRQueue[0].burstTime -= quantum;
-
+                        if (RRQueue.size() == 1 && processVector.empty()) {
+                            outputFile << RRQueue[0].burstTime << "X\n";
+                            time += RRQueue[0].burstTime;
+                            RRQueue[0].burstTime -= RRQueue[0].burstTime;
+                        } else if (RRQueue.size() == 1 && (time + quantum) < processVector[1].arrivalTime && !processVector.empty()) {
+                            int totalBurst = 0;
+                            while ( time < RRQueue[1].arrivalTime) {
+                                if (RRQueue[0].burstTime > quantum) {
+                                    time += quantum;
+                                    totalBurst += quantum;
+                                    RRQueue[0].burstTime -= quantum;
+                                } else {
+                                    time += RRQueue[0].burstTime;
+                                    totalBurst += RRQueue[0].burstTime;
+                                    RRQueue[0].burstTime -= RRQueue[0].burstTime;
+                                }
+                            }
+                            outputFile << totalBurst;
+                            
+                            if (RRQueue[0].burstTime <= 0){
+                                outputFile << "X\n";
+                            }
+                        }
+                        else {
+                            outputFile << quantum << "\n";
+                            time += quantum;
+                            RRQueue[0].burstTime -= quantum;                      
+                        }
                         RRQueue.push_back(RRQueue[0]);
                         tempRRWaiting2.push_back(tempRRWaiting2[0]);
                         RRQueue.erase(RRQueue.begin());
-                        tempRRWaiting2.erase(tempRRWaiting2.begin());
+                        tempRRWaiting2.erase(tempRRWaiting2.begin()); 
                     } else {
-                        outputFile << RRQueue[0].burstTime << "X\n";
+                        if (RRQueue[0].burstTime != 0) outputFile << RRQueue[0].burstTime << "X\n";
                         time += RRQueue[0].burstTime;
                         
                         //setting turnaroundTime
