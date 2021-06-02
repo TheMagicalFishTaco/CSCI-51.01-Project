@@ -105,6 +105,44 @@ int main()
         }
 
 
+        if (scheduleAlgorithm == "SJF")
+        {
+            int currentMinBurstTime = 0, waitTime = 0, turnTime = 0, index = 0;
+            Process nextProcess;
+
+            //outputs test case number and schedule algorithm
+            outputFile << i + 1 << " " << scheduleAlgorithm << endl;
+
+            //sorts the stack by their arrivalTime
+            sort(processVector.begin(), processVector.end(), compareArrival);
+
+            while (!processVector.empty()) {
+                //fast forwards time if process hasn't arrived yet
+                if (time < processVector[0].arrivalTime) {
+                    time = processVector[0].arrivalTime;
+                }
+
+                //checks which among the processes that have already arrive have the lowest burstTime
+                for (int j = 0; j < int(processVector.size()); j++) {
+                    currentMinBurstTime = processVector[0].burstTime;
+                    if (time >= processVector[j].arrivalTime && currentMinBurstTime > processVector[j].burstTime) {
+                        nextProcess = processVector[j];
+                        index = j;
+                    }
+                }
+                if (processVector.size() == 1) {
+                    nextProcess = processVector[0];
+                    index = 0;
+                }
+                processVector.erase(processVector.begin() + index);
+                outputFile << time << " " << nextProcess.processID << " " << nextProcess.burstTime << "X" << "\n";
+                time += nextProcess.burstTime;
+                turnTime = time - nextProcess.arrivalTime;
+                waitTime = turnTime - nextProcess.burstTime;
+                waitingTimeList.push_back({ nextProcess.burstTime, waitTime, turnTime, waitTime, nextProcess.processID });
+            }
+        }
+
         else if (scheduleAlgorithm == "SRTF")
         {
             vector<Process> waitingQueue, tempVector;
@@ -203,7 +241,6 @@ int main()
 
         }
 
-        //Lance's part
         else if (scheduleAlgorithm == "P")
         {
             vector<Process> tempVector;
